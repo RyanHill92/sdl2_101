@@ -77,6 +77,15 @@ int main(int argc, char* args[]) {
     ImageTexture pretty_scene = ImageTexture(renderer, "./../media/pretty_scene.png");
     ImageTexture stick_guy =
         ImageTexture(renderer, "./../media/foo.png", ImageTextureOptions{true, 0, 255, 255});
+    ImageTexture dots =
+        ImageTexture(renderer, "./../media/dots.png", ImageTextureOptions{true, 0, 255, 255});
+
+    std::vector<SDL_Rect> dot_clips;
+    for (int y = 0; y < 200; y += 100) {
+      for (int x = 0; x < 200; x += 100) {
+        dot_clips.push_back(SDL_Rect{x, y, 100, 100});
+      }
+    }
 
     SDL_Event event;
     while (true) {
@@ -90,6 +99,11 @@ int main(int argc, char* args[]) {
 
         pretty_scene.Render();
         stick_guy.Render(screen_width / 2, screen_height * 3 / 5);
+
+        dots.RenderClip(0, 0, dot_clips[0]);
+        dots.RenderClip(screen_width - 100, 0, dot_clips[1]);
+        dots.RenderClip(0, screen_height - 100, dot_clips[2]);
+        dots.RenderClip(screen_width - 100, screen_height - 100, dot_clips[3]);
 
         SDL_RenderPresent(renderer.get());
       }

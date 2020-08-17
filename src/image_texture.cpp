@@ -47,22 +47,37 @@ ImageTexture::ImageTexture(
   LoadImage(image_path);
 }
 
-void ImageTexture::Render() const {
+bool ImageTexture::Validate() const {
   if (!_canRender) {
-    std::cout << "Unable to render. Check STDERR for details." << std::endl;
-    return;
+    std::cout << "Unable to render because initialization failed. Check STDERR for details."
+              << std::endl;
+    return false;
   }
 
-  // Just render full image to full screen.
-  SDL_RenderCopy(_renderer.get(), _texture.get(), nullptr, nullptr);
+  return true;
 }
 
-void ImageTexture::Render(int x, int y) const {
-  if (!_canRender) {
-    std::cout << "Unable to render. Check STDERR for details." << std::endl;
-    return;
+// Render the entire texture to the entire rendering target.
+void ImageTexture::Render() const {
+  if (Validate()) {
+    SDL_RenderCopy(_renderer.get(), _texture.get(), nullptr, nullptr);
   }
+}
 
-  SDL_Rect target = {x, y, _image_width, _image_height};
-  SDL_RenderCopy(_renderer.get(), _texture.get(), nullptr, &target);
+// Render the texture to a point on the rendering target using
+// source image width and height.
+void ImageTexture::Render(int x, int y) const {
+  if (Validate()) {
+    SDL_Rect dst = {x, y, _image_width, _image_height};
+    SDL_RenderCopy(_renderer.get(), _texture.get(), nullptr, &dst);
+  }
+}
+
+// Render a specific clip of the source image to a point on the
+// rendering target.
+void ImageTexture::RenderClip(int x, int y, SDL_Rect clip) const {
+  if (Validate()) {
+    SDL_Rect dst = {x, y, clip.w, clip.h};
+    SDL_RenderCopy(_renderer.get(), _texture.get(), &clip, &dst);
+  }
 }

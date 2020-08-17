@@ -35,6 +35,8 @@ class ImageTexture {
   ImageTexture(std::shared_ptr<SDL_Renderer> renderer, std::string image_path);
   ImageTexture(
       std::shared_ptr<SDL_Renderer> renderer, std::string image_path, ImageTextureOptions options);
+  bool Validate() const;
   void Render() const;
   void Render(int x, int y) const;
+  void RenderClip(int x, int y, SDL_Rect clip) const;
 };
